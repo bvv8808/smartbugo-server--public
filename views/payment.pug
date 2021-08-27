@@ -1,0 +1,294 @@
+extends layout 
+block content
+    body(onLoad=`setVar(${JSON.stringify(data)})`)
+    script(type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js")
+
+    <header class="hd hd_w">
+        <h2>결제하기</h2>
+        <a href="javascript:history.back()" class="hd_back">
+            <img src="/img/icon_back.png" alt="뒤로 가기" />
+        </a>
+    </header>
+    <!-- 끝 } header -->
+
+    <!-- 결제하기 화면 { 시작 -->
+    <div class="payment_wrap">
+        <form name="fpaymentform" id="fpaymentform" method="post" action="" autocomplete="off" onsubmit="payment(event)">
+            <legend class="sound_only">결제하기</legend>
+            <!-- 배송지 -->
+            <section class="pay_sec pay_place">
+                <h3>배송지 &ast;</h3>
+                <a href="javascript:history.back()" class="pay_btn btn_changePlace">
+                    |배송지 변경
+                    <img src="/img/ico_arr_right_w.png" alt="배송지 변경" />
+                </a>
+                <div class="selected">
+                    - var dest = data.dest.split(',')
+                    p.selected_obituary= dest[0]
+                    span.selected_address= dest[1].split('/')[0]
+                    p.selected_resident #{JSON.parse(data.sangju).wr_1_name} 상주
+                </div>
+            </section>
+            <!-- 화환 리본 문구 -->
+            <div class="pay_sec">
+                <section class="pay_ribbonText">
+                    <h3>화환 리본 문구 &ast;</h3>
+                    <a href="javascript:history.back()" class="pay_btn btn_editText">
+                        |문구수정
+                        <img src="/img/ico_arr_right_w.png" alt="문구수정" />
+                    </a>
+                    <div class="selected_ribbonText">
+                        - var phrase = data.phrase.split(',')
+                        <p><span class="middot">&middot;</span> #{phrase[0]}</p>
+                        <p><span class="middot">&middot;</span> #{phrase[1]}</p>
+                    </div>
+                </section>
+                section.pay_amountPayment
+                    h3 결제금액
+                    .tbl_pay_info
+                        - var flower = JSON.parse(data.flower)
+                        p
+                            span.tbl_l= flower.name? flower.name : '상품정보 없음'
+                            span#price.tbl_r
+                        
+                        p
+                            span.tbl_l 배송비(도시산간지역 추가 배송비)
+                            span#deliveryFee.tbl_r 무료배송
+                        
+                        p.total_amountPayment
+                            span.tbl_l 총 결제 금액
+                            span#totalPrice.tbl_r
+                        
+                    
+                
+            </div> 
+            <!-- 결제수단-->
+            <section class="pay_method">
+                <h3>결제수단</h3>
+                <div class="tab_round tab_method">
+                    <ul>
+                        <li data-id="method_card" class="on">신용카드</li>
+                        <li data-id="method_bank">무통장입금</li>
+                        <li data-id="method_easyPay">개인</li>
+                    </ul>
+                    <!-- 신용카드 -->
+                    <div id="method_card" class="tabContent on">
+                    </div>
+                    <!-- 무통장입금 -->
+                    <div id="method_bank" class="tabContent">
+                        <div class="useInfo">
+                            <button type="button" class="btn_useInfo">
+                                <img src="/img/icon_info.png" alt="무통장입금 이용 안내" />
+                                <span>무통장입금 이용 안내</span>
+                                <span class="toggle_arrow"></span>
+                            </button>
+                            <div class="useInfo_con">무통장입금내용안내</div>
+                        </div>
+                    </div>
+                    <!-- 개인 -->
+                    <div id="method_easyPay" class="tabContent">
+                        <ul class="creditCard_list">
+                            <li>
+                                <input type="radio" id="pay_payco" name="methodCredit" value="페이코" class="ab" checked />
+                                <label for="pay_payco">
+                                    <p><img src="/img/pay_payco.png" alt="페이코" width="60" /></p>
+                                    <span>페이코</span>
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="pay_kakao" name="methodCredit" value="카카오페이" class="ab" />
+                                <label for="pay_kakao">
+                                    <p><img src="/img/pay_kakao.png" alt="카카오페이" width="43" /></p>
+                                    <span>카카오페이</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 약관 동의 -->
+                    <div class="terms_sec">
+                        <form name="fterms" id="fterms" action="" method="POST" autocomplete="off">
+                            <div class="terms_con terms_toggle_con">
+                                <div class="chk_agree_box">
+                                    <input type="checkbox" name="payment_progress" id="payment_progress" class="ab" checked />
+                                    <label for="payment_progress">
+                                        <span class="chk agree_chk"></span>
+                                        <span class="afree_txt">결제 진행 필수 동의</span>
+                                    </label>
+                                    <button type="button" class="toggle_agree"><span class="sound_only">열기</span></button>
+                                </div>                            
+                                <ul class="list_agree">
+                                    <li>
+                                        <span>전자금융거래 이용약관</span>
+                                        <a href="/view/content?title=c1" class="view_terms">
+                                            <span>내용보기</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span>개인정보 수집 및 이용안내</span>
+                                        <a href="/view/content?title=c2" class="view_terms">
+                                            <span>내용보기</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span>개인정보 제 3자 제공/위탁안내</span>
+                                        <a href="/view/content?title=c3" class="view_terms">
+                                            <span>내용보기</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span>개인정보 제 3자 동의 (배송 및 주문처리 목적)</span>
+                                        <a href="/view/content?title=c4" class="view_terms">
+                                            <span>내용보기</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="terms_con terms_box">
+                                <div class="chk_agree_box">
+                                    <input type="checkbox" name="Ecommerce_law" id="Ecommerce_law" class="ab" checked />
+                                    <label for="Ecommerce_law">
+                                        <span class="chk agree_chk"></span>
+                                        <span class="afree_txt">주문할 상품의 상품명, 상품가격, 배송정보를 확인하였습니다. (전자상거래법 제 8조 2항)</span>
+                                    </label>
+                                </div>          
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            <!-- 결제버튼-->
+            <div class="pay_button_box">
+                <input type="button" value="결제" class="btn_pay" onclick="payment(event)" />
+            </div>
+        </form>
+    </div>
+
+    script.
+        const imp = window.IMP 
+        imp.init('imp95424667')
+
+        let initialData
+        let flower
+        function setVar(data) {
+            initialData= data
+
+            const spanPrice= document.querySelector('#price')
+            const spanTotal= document.querySelector('#totalPrice')
+
+            flower= JSON.parse(data.flower)
+
+            const priceWithComma= insertComma(flower.price) + '원'
+            spanPrice.innerText= priceWithComma
+            spanTotal.innerText= flower.deliveryFee? priceWithComma : insertComma( flower.price + flower.deliveryFee )+'원'
+            
+            if (flower.deliveryFee) {
+                const spanDeli= document.querySelector('#deliveryFee')
+                spanDeli.innerText= insertComma(flower.deliveryFee)+ '원'
+            }
+        }
+
+        const insertComma = (money) => {
+            const strMoney = money.toString();
+            const firstPartLength = strMoney.length % 3;
+            const firstPart = strMoney.slice(0, firstPartLength);
+            const rest = strMoney.slice(firstPartLength);
+
+            if (!rest) return firstPart;
+
+            let restPart = '';
+            let cnt = 0;
+            for (let i = 0; i < rest.length; i++) {
+                restPart += rest[i];
+                if (++cnt === 3) {
+                cnt = 0;
+                restPart += ',';
+                }
+            }
+            restPart = restPart.substring(0, restPart.length - 1);
+            const result = firstPart ? firstPart + ',' + restPart : restPart;
+            return result;
+        };
+        
+        const createMid = (method) => new Promise((resolve, reject) => {
+            const mid= `mid_${new Date().getTime()}`
+            
+            const payload = {
+                            ...initialData,
+                            billing: {
+                                method,
+                                mid,
+                            },
+                        }
+
+            const xhr = new XMLHttpRequest()
+            xhr.onload = () => {
+                resolve(mid)
+            }
+
+            xhr.open('POST', '/view/registerMid')
+            xhr.setRequestHeader('Content-type', 'application/json')
+            xhr.send(JSON.stringify(payload))
+
+            return mid
+        })
+        
+        function payment(e) {
+            //- e.preventDefault()
+
+            const ons = document.querySelectorAll('.on')
+            let method = ons[0].innerText
+
+            if (method === '무통장입금') {
+                const f = document.createElement('form')
+                f.action='/view/paymentBank'
+                f.method='post'
+                f.innerHTML = `
+                    <input type="hidden" name="memo" value="${initialData.memo}" />
+                    <input type="hidden" name="bugoId" value="${initialData.bugoId}" />
+                    <input type="hidden" name="sangju" value='${initialData.sangju}' />
+                    <input type="hidden" name="phrase" value="${initialData.phrase}" />
+                    <input type="hidden" name="orderer" value='${initialData.orderer}' />
+                    <input type="hidden" name="flower" value='${initialData.flower}' />
+                    <input type="hidden" name="dest" value='${initialData.dest}' />
+                `
+
+                document.body.appendChild(f)
+                f.submit()
+
+            } else {
+                let payMethod
+                if (method==='신용카드') payMethod = 'card'
+                else {
+                    const rs = document.querySelectorAll('input[name="methodCredit"]')
+                    //- console.log(rs[0].checked, rs[1].checked)
+                    const pay = Array.prototype.filter.call(rs, (item) => item.checked===true)[0].value
+                    switch (pay) {
+                        case '페이코':
+                        method = pay
+                        payMethod = 'payco'
+                        break;
+                        case '카카오페이':
+                        method = pay
+                        payMethod = 'kakaopay'
+                        break;
+                    }
+                }
+                const flower = JSON.parse(initialData.flower)
+                const orderer = JSON.parse(initialData.orderer)
+                createMid(method).then(mid => {
+                    imp.request_pay({
+                        pg: 'html5_inicis',
+                        pay_method: payMethod,
+                        merchant_uid: mid,
+                        amount: (flower.price + flower.deliveryFee) || 100,
+                        name: flower.name,
+                        buyer_name: orderer.name,
+                        buyer_tel: orderer.phone,
+                        m_redirect_url: 'https://smartbugo-server.herokuapp.com/view/payment'
+                    })
+                })
+         
+
+            }
+        }

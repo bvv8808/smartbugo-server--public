@@ -1,0 +1,381 @@
+extends layout 
+block content 
+    if data.fromPayment
+        script.
+            alert('결제가 완료 되었습니다')
+            location.href='/view/wreath'
+    body(onLoad=`setVar(${JSON.stringify(data)})`)
+        script(src='/js/kakaosdk.js' type='text/javascript').
+        <header class="hd hd_w hd_bd">
+            <h2>근조화환</h2>
+            //- <a href="javascript:history.back()" class="hd_back">
+            //-     <img src="/img/icon_back.png" alt="뒤로 가기" />
+            //- </a>
+            <button type="button" class="btn_share">
+                <img src="/img/icon_share.png" alt="공유하기" />
+            </button>
+        </header>
+        <!-- 끝 } header -->
+            
+        <!-- 근조화환 { 시작 -->
+        <div class="tab tab_wreath">
+            <ul>
+                <li data-id="wreath_cont01" class="on" onclick="changeCategory('3단')"><span>3단 화환</span></li>
+                <li data-id="wreath_cont02" onclick="changeCategory('3단특')"><span>3단 특화환</span></li>
+                <li data-id="wreath_cont03" onclick="changeCategory('바구니')"><span>바구니·오브제</span></li>
+            </ul>
+            //- 3단 화환
+            div#wreath_cont01.tabContent.on
+                ul.wreath_list    
+                    li 
+                        button#more1(onClick=`fetchMore(1)`) 더 보기    
+            
+            //- 3단 특화환
+            div#wreath_cont02.tabContent
+                ul.wreath_list
+                    li 
+                        button#more2(onClick=`fetchMore(2)`) 더 보기
+                
+                
+            
+            <!-- 바구니·오브제 -->
+            div#wreath_cont03.tabContent
+                ul.wreath_list
+                    li
+                        button#more3(onClick="fetchMore(3)") 더 보기
+                
+                
+            
+            
+            <!-- 공통 하단 -->
+            <div class="wreath_footer">
+                <div class="delivery_info">
+                    <p class="delivery_txt">
+                        <img src="/img/icon_delivery.png" alt="결제 완료 후 3시간 내 배송" />
+                        |결제 완료 후 <strong>3시간 내 배송</strong>
+                    </p>
+                    <button type="button" class="btn_delivery_guide">
+                        |주문배송안내
+                        <img src="/img/ico_arr_right_lp.png" alt="주문배송안내" />
+                    </button>
+                </div>
+                <a href="tel:02-1234-5678" class="serviceCenter">고객센터 1234-5678 <span>365일 연중무휴 00~20시</span></a>
+                <footer class="company_info">
+                    <h2 class="btn_toggle">사업자정보</h2>
+                    <div class="cp_toggle_con">
+                        <div class="cp_terms">
+                            <a href="/view/content?title=사업자정보확인">사업자정보확인<span class="verbar">ㅣ</span></a>
+                            <a href="/view/content?title=이용약관">이용약관<span class="verbar">ㅣ</span></a>
+                            <a href="/view/content?title=개인정보처리방침">개인정보처리방침</a>
+                        </div>
+                        <p class="cp_info">
+                            <strong>주식회사 더블루밍</strong><br />
+                            |서울특별시 강서구 마공중앙6로 70<br />
+                            |(마곡동, 매그넘797) 1206, 1207호<br />
+                            |이메일  thebloomingcorp@gmail.com<br />
+                            |팩스번호 02-2606-07777
+                        </p>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <!-- 끝 } 근조화환 -->
+            
+        //- 팝업: 공유하기
+        div.popup.popup_share
+            h2 공유하기
+            p 근조화환으로 유가족들의 슬픔을 함께 위로해주세요.
+            ul.receiveBox
+                li.rec_harf.rec_msg
+                    a.btn_rec(href="javascript:shareWithSms()")
+                        img(src="/img/icon_mail.png" alt="문자메세지")
+                        | 문자메세지
+                
+                li.rec_harf.rec_kakao
+                    button.btn_rec(type="button" onClick="shareWithTalk()")
+                        img(src="/img/kakaotalk.png" alt="카카오톡")
+                        | 카카오톡
+                    
+                
+            
+            button.popup_close(type="button")
+                img(src="/img/icon_exit_2.png" alt="팝업 닫기")
+            
+        
+            
+        //- <!-- 팝업 - 주문·배송 안내 -->
+        div.popup.popup_delivery
+            h2 주문·배송 안내
+            div.tab.tab_delivery
+                h3.sound_only 주문·배송 안내
+                ul
+                    <li data-id="delivery_cont01" class="on">영업 및 주문 안내</li>
+                    <li data-id="delivery_cont02">배송안내</li>
+                    <li data-id="delivery_cont03">교환 및 환불 안내</li>
+                
+                
+                div#delivery_cont01.tabContent.on
+                    h4 [영업 및 주문 안내]
+                    div - 평일~토요일 오전09시부터 오후18시 까지 상담 가능 (공휴일 휴무)
+                        br
+                        | - 배송 영업 시간
+                        br
+                        | 오전9시~오후9시(일부지역 제외) 사이 입니다. 그 외 시간에 배송을 원할 경우엔 고객센터로 문의 하시기바랍니다. 단, 빠른 배송은 전날 고객센터운영시간에 예약하셔야만 가능합니다.
+                        br
+                        | 전화 주문은 영업시간에만 가능하며, 앱 주문은 24시간 가능합니다.
+                        br
+                        | - 배송사진의 경우 현장 사진은 요청시에만 가능하며, 기본적으로는 배송전 체인점에서 촬영한 사진이 상품 배송완료 후 전송됩니다.
+                        br
+                        | - 상품제작은 입금 또는 결제 확인 후 이루어집니다. 결제가 늦어질 경우 배송이 지연될 수 있습니다.
+                        br
+                        | - 구매 후 변경 사항이 있을 시 고객센터로 필히 전화 부탁드립니다.
+                        br
+                        | - 현금영수증 또는 전자계산서 발급이 필요한 경우 주문전 미리 말씀 부탁드립니다.
+        
+                
+                <!-- 배송안내 -->
+                div#delivery_cont02.tabContent
+                    h4 [배송안내]
+                    div - 전국 배송 가능하며 기본 배송료는 무료입니다. (일부 상품 제외)
+                        br
+                        | - 배송 시간은 평균 3시간 이내 가능합니다. 단, 도로사정에 따라 달라질 수 있습니다.
+                        br
+                        | 단, 도서 산간 및 (6대 광역시 포함)시군 소재지에서 떨어진 지역의 경우 추가배송비가 발생 될 수 있습니다.
+                        br
+                        | (당일 이내 배송가능하나 시간 지정은 어려우며 자세한 사항은 고객센터로 문의 하시기 바랍니다.)
+        
+                
+                <!-- 교환 및 환불 안내 -->
+                div#delivery_cont03.tabContent
+                    h4 [교환 및 환불 안내]
+                    div - 상품은 공산품이 아닌 관계로 체인점 보유 상품에 따라 포장(화분포함)이나 소재가 상이할 수 있으며, 계절과 지역에 따라 디자인이 변경 될 수 있습니다. 이로 인한 반품/취소는 불가능합니다.
+                        br
+                        | - 생화 상품은 제작 완료 후 에는 재사용을 하지 않음으로 고객의 변심으로 인한 반품 및 환불이 불가능 합니다.
+                        br   
+                        | - 배송 안료 후 수취 거부한 경우 및 주문자의 주문서 작성 내용 오류로 배송이 잘못된 경우에는 반품/취소가 불가능합니다.
+                        br
+                        | - 당일 주문 후 취소는 30분이내 요청 하셔야 만 취소가 가능 합니다.
+                        br
+                        | - 취소요청 후 환불은 요청 후 영업일 기준으로 48시간 이내 환불 처리 가능합니다.
+                        br
+                        | - 카드 환불은 카드사 취소 규정에 따라 약 일주일 정도 소요될 수 있습니다.
+                        br
+                        | - 예약 주문건은 배송요청시간 3시간 이전에 가능하며 반드시 고객센터로 확인 하셔야 합니다.
+                        br
+                        | - 화환의 포인트꽃 색상은 랜덤으로 배송되며, 색상 관련 환불 및 교환 요청은 불가능합니다</div>
+                
+            
+                button.popup_close(type="button")
+                    img(src="/img/icon_exit_2.png" alt="팝업 닫기")
+
+        script.
+            Kakao.init('15931ed324691e5c22a657b516ad6b6a')
+
+            const categoryParser = {
+                "3단": 10,
+                "3단특": 20,
+                바구니: "q0",
+            };
+
+            let bugoId = 0
+                
+            let curCategory = 10
+            let list1 = []
+            let list2 = []
+            let list3 = []
+            let list1End = false;
+            let list2End = false;
+            let list3End = false;
+            let list1Page = 1;
+            let list2Page = 1;
+            let list3Page = 1;
+
+
+            const [ul1, ul2, ul3] = document.querySelectorAll('.wreath_list')
+            const more1 = document.querySelector('#more1')
+            const more2 = document.querySelector('#more2')
+            const more3 = document.querySelector('#more3')
+            const moreBox1 = more1.parentNode
+            const moreBox2 = more2.parentNode
+            const moreBox3 = more3.parentNode
+            
+
+            function setVar(initData) {
+                initData.bugoId !== 0 && (bugoId = initData.bugoId)
+
+                fetchMore(1)
+                fetchMore(2)
+                fetchMore(3)
+            }
+
+            
+            function changeCategory(newCategory) {
+                
+
+                if ((newCategory==='3단' && list1End) || 
+                (newCategory==='3단특' && list2End) ||
+                (newCategory==='바구니' && list3End)) return;
+
+                curCategory = categoryParser[newCategory]
+                //- fetchMore()
+            }
+
+            function fetchMore(tab) {
+
+                switch(tab) {
+                    case 1:
+                        !list1End && execFetch('10', list1Page)
+                    break;
+                    case 2:
+                        !list2End && execFetch('20', list2Page)
+                    break;
+                    case 3:
+                        !list3End && execFetch('q0', list3Page)
+                    break;
+                }
+            }
+
+            function execFetch(category, page) {
+                const xhr = new XMLHttpRequest()
+
+                xhr.onload = () => {
+                    const fetchedList = JSON.parse(xhr.responseText).list
+                    switch(category) {
+                        case '10':
+                            if (fetchedList.length < 10){
+                                list1End = true
+                                more1.classList.add('inactive')
+                                more1.disabled = true
+                            } else list1Page++
+                            list1 = [...list1, ...fetchedList]
+                        case '20':
+                            if (fetchedList.length < 10){
+                                list2End = true
+                                more2.classList.add('inactive')
+                                more2.disabled = true
+                            } else list2Page++
+                            list2 = [...list2, ...fetchedList]
+                        case 'q0':
+                            if (fetchedList.length < 10){
+                                list3End = true
+                                more3.classList.add('inactive')
+                                more3.disabled = true
+                            } else list3Page++
+                            list3 = [...list3, ...fetchedList]
+                    }
+
+                    fetchedList.length > 0 && appendItems(fetchedList)
+                }
+
+                xhr.open('GET', `/view/wreathData?category=${category}&page=${page}`)
+                xhr.send()
+            }
+
+            function appendItems(newList) {
+                console.log(bugoId)
+                console.log(newList)
+                newList.forEach((item) => {
+                        let newLi = document.createElement('li')
+                    
+                        newLi.innerHTML = !item.discountRate? `
+                            <a href="/view/wreathDetail?f=${item.id}${bugoId!==0? `&b=${bugoId}` : ''}">
+                                <img src="${item.imgUrl.length? `http://www.smartbugo.co.kr/data/item/${item.imgUrl}` : '/img/img01_2.png'}" alt="3단 화환 이미지" class="wreath_img" />
+                                <div class="wreath_info_box">
+                                    <span class="wr_name">${item.name}</span>
+                                    <span class="wr_total_price"><span class="wr_price">${insertComma(item.price)}</span>원</span>
+                                </div>
+                            </a>
+                            <div class="order_button">
+                            
+                                <a href="/view/${bugoId!==0? `orderform?f=${item.id}&b=${bugoId}` : `searchBugo?f=${item.id}`}" class="wr_align btn_order">
+                                    <img src="/img/icon_cart.png" alt="주문하기" />주문하기
+                                </a>
+                            </div>
+                        `
+                        : `
+                            <a href="/view/wreathDetail?f=${item.id}${bugoId!==0 && `&b=${bugoId}`}">
+                                <img src="${item.imgUrl.length? `http://www.smartbugo.co.kr/data/item/${item.imgUrl}` : '/img/img01_2.png'}" alt="3단 화환 이미지" class="wreath_img" />
+                                <div class="wreath_info_box">
+                                    <p class="wreath_info">
+                                        <span class="wr_name">${item.name}</span>
+                                        <span class="wr_total_price">
+                                            <span class="wr_price">${insertComma(item.price)}</span>원
+                                            <span class="wr_discount">${item.discountRate}%</span>
+                                        </span>
+                                        <span class="wr_first_price">${item.originalPrice}원</span>
+                                    </p>
+                                </div>
+                            </a>
+                            <div class="order_button">
+                            
+                                <a href="/view/${bugoId!==0? `orderform?f=${item.id}&b=${bugoId}` : `searchBugo?f=${item.id}`}" class="wr_align btn_order">
+                                    <img src="/img/icon_cart.png" alt="주문하기" />주문하기
+                                </a>
+                            </div>
+                        `
+
+                        switch(item.category) {
+                            case '10':
+                            //- console.log(ul1)
+                            ul1.insertBefore(newLi, moreBox1)
+                            break;
+                            case '20':
+                            ul2.insertBefore(newLi, moreBox2)
+                            break;
+                            case 'q0':
+                            ul3.insertBefore(newLi, moreBox3)
+                            break;
+                        }
+                    })
+                    
+                }
+
+            const insertComma = (money) => {
+                const strMoney = money.toString();
+                const firstPartLength = strMoney.length % 3;
+                const firstPart = strMoney.slice(0, firstPartLength);
+                const rest = strMoney.slice(firstPartLength);
+
+                if (!rest) return firstPart;
+
+                let restPart = '';
+                let cnt = 0;
+                for (let i = 0; i < rest.length; i++) {
+                    restPart += rest[i];
+                    if (++cnt === 3) {
+                    cnt = 0;
+                    restPart += ',';
+                    }
+                }
+                restPart = restPart.substring(0, restPart.length - 1);
+                const result = firstPart ? firstPart + ',' + restPart : restPart;
+                return result;
+            };
+
+            
+
+            function shareWithTalk(bugo) {
+                const params = {
+                    templateId: 53524,
+                    //- templateArgs: {
+                    //-     title: '스마트부고 부고 알림',
+                    //-     description: `故 ${bugo.deceasedName}님께서 별세 하셨기에\n` +
+                    //-                 "아래와 같이 부고를 전해 드립니다.",
+                    //-     dname: bugo.deceasedName,
+                    //-     bid: bugo.bugoId.toString()
+                    //- }
+                }
+                Kakao.Link.sendCustom(params)
+            }
+            function shareWithSms(bugo) {
+                
+                const mobileWebUrl = `https://smartbugo-server.herokuapp.com/view/wreath`;
+                const msgBody = `슬픔을 나누는 특별한 자리,%0a근조화환으로 고인에 대한%0a애도의 마음을 담아 빈소로%0a보내실 수 있습니다.%0a애도하는 마음을 전해%0a상주를 위로해 주세요.%0a%0a[화환 상품 보기]%0a%0a${mobileWebUrl}`;
+                
+                if(navigator.userAgent.match(/iPhone/i)) {
+                    location.href=`sms:&body=${msgBody}`
+                } else {
+                    location.href=`sms:?body=${msgBody}`
+                }
+                
+            }

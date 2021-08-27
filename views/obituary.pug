@@ -1,0 +1,308 @@
+extends layout
+block content
+    script(src='/js/kakaosdk.js' type='text/javascript').
+    if !bugo
+        script.
+            alert('삭제 되었거나 존재하지 않는 부고입니다.')
+    else
+        body(onLoad=`renderMap(${bugo.funeral.x}, ${bugo.funeral.y})`)
+            script(type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=4hfsk029a7").
+            header.hd.hd_w
+                h2 대한병원장례식장
+            
+                
+            //- 부고장 { 시작
+            div.notice_wrap
+                h2.sound_only 부고장
+                <!-- 부고장 정보 -->
+                div.ob_header
+                    img.ob_img(src="/img/img05.png" alt="부고장")
+                    p.death_date [ 
+                        | 2020년 11월 18일
+                        |  별세 ]
+                    p.deceased= '考'+bugo.deceased.name
+                        span.deceased_info= `(${bugo.deceased.age}세·${bugo.deceased.gender.substring(0,1)})`
+                    
+                
+                <!-- 상주 -->
+                div.ob_tbl
+                    h3 상주
+                    - sangjus = JSON.parse(bugo.sangjus)
+                    ul
+                        for sangju in sangjus
+                            li
+                                strong= sangju.wr_1_type
+                                span= sangju.wr_1_name
+                        
+                    ul
+                        li
+                            strong 빈소
+                            span= `${bugo.funeral.name} ${bugo.funeral.binso}`
+                        
+                        li
+                            strong 발인
+                            span= bugo.imprint.time
+                                <br />
+                                if bugo.imprint.rest < 0
+                                    | (발인 완료)
+                                else
+                                    | (발인 
+                                    span.remaining= bugo.imprint.rest
+                                    | 일 전)
+                            
+                        li
+                            strong 장지
+                            span= bugo.buried
+                        
+                        
+                    
+                
+                <!-- 장례식장 지도 -->
+                div.ob_contact
+
+                    div#map(style="border: 1px solid black")
+                    ul.ob_guide
+                        li.btn_traffic
+                            img(src="/img/icon_subway.png" alt="교통안내")
+                            span 교통안내
+                        
+                        li.btn_park
+                            img(src="/img/icon_parking.png" alt="주차안내")
+                            span 주차안내
+                        
+                        li.btn_navi
+                            img(src="/img/icon_map.png" alt="네비게이션")
+                            span 네비게이션
+        
+                    
+            
+                //- 조문 메시지
+                div(class="ob_messeage")
+                    h3 조문 메시지 ( 
+                        span= msgs.length
+                        |  )
+                    
+                    a(href="/view/condolenceMsg?b="+bugo.bugoId class="btn_all_view" ) 모두보기
+                        img(src="/img/ico_arr_right_p.png" alt="모두보기")
+                    
+                    ul(class="ob_msg_list")
+                        for bugoMsg in msgs
+                            li
+                                strong= bugoMsg.sender
+                                p= bugoMsg.msg
+
+                    
+                    div(class="btn_write_box")
+                        button(type="button" class="btn_write") 글남기기
+                    
+                
+                <!-- 근조화환 보내신분 -->
+                div.ob_wreath
+                    h3 근조화환 보내신분
+                    a.btn_buy(href="/view/wreath?b="+bugo.bugoId) 전하기
+                        img(src="/img/ico_arr_right_g.png" alt="전하기")
+
+                    ul.ob_wreath_list
+                        //- 아무도 작성하지 않은 경우
+                        if !flowerSenders.length
+                            li
+                                img(src="/img/icon_flower.png" alt="첫번째 근조화환을 전해주세요.")
+                                p 첫번째 근조화환을 전해주세요.
+                        else
+                            for sender in flowerSenders
+                                li
+                                    img(src="/img/icon_flower.png" alt="첫번째 근조화환을 전해주세요.")
+                                    p= sender
+                        
+                    </ul>
+                </div>
+            
+            <!-- 끝 } 부고장 화면 -->
+
+            <!-- 팝업 - 교통안내 -->
+            div.popup.popup_guide.popup_guideTraffic
+                h2 교통 안내
+                div.addr_content
+                    p= bugo.funeral.name
+                    span= bugo.funeral.address
+                
+                p 등록된 교통 안내 정보가 없습니다
+                    br
+                    | 네비게이션을 참고해 주시기 바랍니다
+                button.popup_close(type="button")
+                    img(src="/img/icon_exit_2.png" alt="팝업 닫기")
+                
+            </div>
+
+            <!-- 팝업 - 주차안내 -->
+            div.popup.popup_guide.popup_guidePark
+                h2 주차 안내
+                div.addr_content
+                    p= bugo.funeral.name
+                    span= bugo.funeral.address
+                
+                p 등록된 주차 안내 정보가 없습니다
+                    br
+                    | 네비게이션을 참고해 주시기 바랍니다
+                button.popup_close(type="button")
+                    img(src="/img/icon_exit_2.png" alt="팝업 닫기")
+            
+
+            <!-- 팝업 - 안내 받을 앱 선택  -->
+            <div class="popup popup_guide popup_guideNavi">
+                <h2>안내 받으실 앱을 선택해주세요</h2>
+                <ul class="guide_app">
+                    <li class="appKakao">
+                        a(href=`javascript:openNavi(${JSON.stringify(bugo.funeral)})`) 카카오내비
+                    </li>
+                    <li class="appTmap">
+                        a(href=`javascript:openTmap(${JSON.stringify(bugo.funeral)})`) 티맵
+                    </li>
+                </ul>
+                <button type="button" class="popup_close">
+                    <img src="/img/icon_exit_2.png" alt="팝업 닫기" />
+                </button>
+            </div>
+
+            <!-- 팝업 - 조문메시지 작성 -->
+            <div class="popup popup_message">
+                <h2>조문메시지 작성</h2>
+                form#condolenceMsg(name="condolenceMsg" method="post" action="" onSubmit=`createMsg(event, ${bugo.bugoId}, this)`) 
+                    legend.sound_only 조문메시지 작성
+                    ul.condolence_form
+                        li
+                            label(for="sender") 작성인 성명 혹은 단체명
+                            input#sender(type="text" name="sender" placeholder="작성인 성명이나 단체명을 기입해주세요")
+                        
+                        li
+                            label(for="sendingcontent") 조문 메시지 내용
+                            textarea#sendingcontent(placeholder="메시지 내용을 작성해주세요")
+                        
+                    
+                    <div class="popup_btn_box">
+                        <input type="submit" class="popup_confirm pop_btn_send noAutoClose" value="등록" />
+                        <button type="button" class="pop_btn_close">닫기</button>
+                    </div>
+                </form>
+                <button type="button" class="popup_close">
+                    <img src="/img/icon_exit_2.png" alt="팝업 닫기" />
+                </button>
+            </div>
+
+            <!-- 팝업 - 상주가 부의금 서비스를 신청 X -->
+            <div class="popup popup_noApply">
+                <div class="popup_content">
+                    <p>해당 서비스는 조문이 어려운 분들을 위한<br />편의 기능입니다.</p>
+                    <p class="popup_accent">현재, 상주님이 미신청 중으로<br />이용하실 수 없습니다</p>
+                </div>
+                <button type="button" class="popup_close">
+                    <img src="/img/icon_exit_2.png" alt="팝업 닫기" />
+                </button>
+                <button type="button" class="popup_confirm btn_bg">확인</button>
+            </div>
+
+            //-  Footer
+            footer.ob_footer
+                h2.sound_only 근조 화환 판매 수익금 일부가 상주에게 전해집니다.
+                section.ob_ft_txt
+                    h3 근조 화환 판매 수익금 일부가 상주에게 전해집니다.
+                    p &copy; 더블루밍 All Rights Reserved.
+                
+                ul
+                    li
+                        //- a(href="/view/condolenceMoney?b="+bugo.bugoId) 부의금
+                        a(href=`javascript:sendMoney(${bugo.bugoId}, '${bugo.sangjus}')`) 부의금
+                    
+                    li
+                        a(href="/view/wreath?b="+bugo.bugoId) 근조화환
+                    
+                    li
+                        a(href="/view/sendObituary?b="+bugo.bugoId) 부고보내기
+            
+
+            script.
+                (function () {
+                    const bodyWidth = document.body.clientWidth
+                    const mapWidth = bodyWidth -40
+                    const mapHeight = mapWidth * (9/16)
+
+                    const map = document.querySelector('#map')
+                    map.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px`)
+
+                    Kakao.init('15931ed324691e5c22a657b516ad6b6a')
+                })()
+                function renderMap(x,y) {
+                    var mapOptions = {
+                        center: new naver.maps.LatLng(x, y),
+                        zoom: 10
+                    };
+
+                    var map = new naver.maps.Map('map', mapOptions);
+                    var marker = new naver.maps.Marker({
+                        position: new naver.maps.LatLng(x, y),
+                        map: map
+                    })
+                }
+                function sendMoney(bid, sangjus) {
+                    console.log(bid, sangjus)
+
+                    const xhr = new XMLHttpRequest()
+
+                    xhr.onload = () => {
+                        if (xhr.responseText==='true') {
+                            // 페이지 이동
+                            location.href="/view/condolenceMoney?b="+bid
+                        }
+                        else {
+                            const popup = document.querySelector('.popup_noApply')
+                            popup.style.display = 'block'
+                        }
+
+
+                        //- domForm.parentNode.style.display = 'none'
+                    }
+
+                    xhr.open('POST', '/view/existApplied')
+                    xhr.setRequestHeader('Content-type', 'application/json')
+                    xhr.send(JSON.stringify({bugoId: bid}))
+                }
+
+                function createMsg(e, bid, domForm) {
+                    e.preventDefault()
+
+                    const sender = document.querySelector('#sender')
+                    const content = document.querySelector('#sendingcontent')
+                    if (!sender.value.length || !content.value.length) {
+                        alert('모든 항목에 값을 입력해 주세요')
+                        return
+                    }
+
+                    const xhr = new XMLHttpRequest()
+
+                    xhr.onload = () => {
+                        console.log(xhr.responseText)
+                        domForm.parentNode.style.display = 'none'
+                    }
+
+                    xhr.open('POST', '/view/msg')
+                    xhr.setRequestHeader('Content-type', 'application/json')
+                    xhr.send(JSON.stringify({sender: sender.value, content: content.value, bugoId: bid}))
+                    
+                }
+
+                function openTmap(funeral) {
+                    const {x, y} = funeral                    
+                    location.href=`tmap://route?referrer=com.skt.Tmap&goalx=${y}&goaly=${x}&goalname=${funeral.name}`
+                }
+                function openNavi(funeral) {
+                    const {x, y} = funeral
+                    const params = {
+                        name: funeral.name,
+                        x: Number(y),
+                        y: Number(x),
+                        coordType: 'wgs84',
+                        routeInfo: true
+                    }
+                    
+                    Kakao.Navi.start(params)
+                }

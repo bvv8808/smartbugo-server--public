@@ -1,0 +1,283 @@
+extends layout 
+block content 
+    body(onLoad=`setVar(${JSON.stringify(data)})`)
+    -console.log('@@', data)
+    header.hd.hd_w
+        h2 주문정보입력
+        a.hd_back(href="javascript:history.back()")
+            img(src="/img/icon_back.png" alt="뒤로 가기")
+        
+    
+
+    //- <!-- 주문정보입력 화면 { 시작 -->
+    .orderform_wrap
+        <form name="forderform" id="forderform" onSubmit="payment(event)" method="post" action="/view/payment" autocomplete="off">
+            legend.sound_only 주문정보입력
+            //- <p class="required">* 표시는 필수 입력</p>
+            section.od_sec.od_place
+                h3 배송지(빈소)
+                //- <h3>
+                //- <!-- ▷ 부고를 선택 전 { -->배송지 &ast;<!-- } ▷ 부고를 선택 전 ->
+                //- <!-- ▶ 부고를 선택 후 { -->
+                //-     <!--배송지(빈소)-->
+                //- <!-- } ▶ 부고를 선택 후 -->
+                //- </h3>
+                ul 
+                    li
+                        //- 부고 선택 전
+                        //- a.select_obituary(href="/searchBugo")
+                        //-     | 부고를 선택해주세요.
+                        //-     img(src="/img/ico_arr_right_p.png" alt="부고를 선택해주세요.")
+
+                        //- 부고 선택 후
+                        .selected
+                            p.selected_obituary= data.bugo.funeral.name + ' ' + data.bugo.funeral.binso
+                            span.selected_address= data.bugo.funeral.address
+
+                    li
+                        label.tit_label(for="memo") 배송메모
+                        input#memo(type="text" name='memo' placeholder="배송메모를 입력해주세요.")
+                    
+                
+            
+            //- <!-- ▶ 부고를 선택 후 { -->
+            //- <!--
+            <section class="selectedResident">
+                h3#labelSangju 화환을 수령할 상주 이름이 표시 됩니다
+                <button type="button" class="btn_changeResident">
+                    | 상주변경
+                    <img src="/img/ico_arr_right_p.png" alt="상주변경" />
+                </button>
+            </section>
+            //- -->
+            //- <!-- } ▶ 부고를 선택 후 -->
+            
+            //- <!-- 화환 리본 문구 -->
+            <section class="od_sec od_ribbon">
+                <h3>화환 리본 문구 &ast;</h3>
+                <button type="button" class="btn_ribbonEx">리본예시보기</button>
+                <ul>
+                    <li>
+                        <label for="mourner" class="sound_only">회사명/모임명/이름</label>
+                        <input type="text" id="mourner" name='mourner' placeholder="회사명/모임명/이름을 입력해주세요." />
+                    </li>
+                    <li>
+                        <label for="ribbonText" class="sound_only">화환 리본 문구</label>
+                        <select id="ribbonText" name='ribbonText'>
+                            <option value="">문구를 지정해주세요</option>
+                            <option value="삼가 고인의 명복을 빕니다">삼가 고인의 명복을 빕니다</option>
+                            <option value="삼가 故人의 冥福을 빕니다">삼가 故人의 冥福을 빕니다</option>
+                            <option value="명복을 빕니다">명복을 빕니다</option>
+                            <option value="직접입력">직접입력</option>
+                        </select>
+                        <input type="text" placeholder="직접입력" class="directInput" name='ribbonTextCustom' />
+                    </li>
+                </ul>
+            </section>
+            
+            <!-- 주문자 -->
+            <section class="od_sec od_orderer">
+                <h3>주문자</h3>
+                <ul>
+                    <li>
+                        <label for="ordererName" class="sound_only">주문자 이름</label>
+                        <input type="text" id="ordererName" name='ordererName' value="" placeholder="주문자 이름을 입력하세요." />
+                    </li>
+                    <li>
+                        <label for="ordererPhone" class="sound_only">주문자 연락처</label>
+                        <input type="text" id="ordererPhone" name='ordererPhone' value="" placeholder="주문자 연락처를 입력하세요." />
+                    </li>
+                </ul>
+            </section>
+            
+            <!-- 결제하기 버튼 -->
+            <div class="orderform_btn">
+                <a href="javascript:payment()" class="btn_payment">결제하기</a>
+                //- input.btn_payment(type='submit' value='결제하기')
+            </div>
+        </form>
+    
+    <!-- 끝 } 주문정보입력 화면 -->
+
+    <!-- 팝업 - 상주변경 -->
+    <div class="popup popup_changeResident">
+        <h2>상주변경</h2>
+        <p>근조화환을 받으실 상주를 변경할 수 있습니다.</p>
+        form(onSubmit=`changeSangju(event, this)`)
+            <ul class="list_changeResident">
+                
+                <li>
+                    <input type="radio" id="resident1" name="resident" value="고길동" class="ab" />
+                    <label for="resident1">고길동</label>
+                </li>
+                <li>
+                    <input type="radio" id="resident2" name="resident" value="노길동" class="ab" />
+                    <label for="resident2">노길동</label>
+                </li>
+                <li>
+                    <input type="radio" id="resident3" name="resident" value="홍길동" class="ab" />
+                    <label for="resident3">홍길동</label>
+                </li>
+            </ul>
+            <div class="popup_btn_box">
+                <button type="submit" class="pop_btn_change" onclick="changeSangju()">변경</button>
+                <button type="button" class="pop_btn_cancle">취소</button>
+            </div>
+    </div>
+
+    <!-- 팝업 - 리본 예시 -->
+    <div class="popup popup_ribbonEx">
+        <h2>리본 예시</h2>
+        <div class="tab_round tab_ex_ribbon">
+            <div class="exRibbon_img_box">
+                <img src="/img/ribbon1.png" alt="리본 예시 이미지" class="exRibbon_img" />
+            </div>
+            <ul>
+                <li data-id="ribbon1" class="on">회사</li>
+                <li data-id="ribbon2">모임</li>
+                <li data-id="ribbon3">개인</li>
+            </ul>
+            <div id="ribbon1" class="tabContent on">
+                <div class="exText">
+                    <p><span class="middot">&middot;</span> (주) OOOO 대표이사 OOOO</p>
+                    <p><span class="middot">&middot;</span> (주) OOOO 임직원 일동</p>
+                </div>
+            </div>
+            <div id="ribbon2" class="tabContent">
+                <div class="exText">
+                    <p><span class="middot">&middot;</span> OO초등학교 OO회 동창 일동</p>
+                    <p><span class="middot">&middot;</span> OOOO회 회원 일동</p>
+                </div>
+            </div>
+            <div id="ribbon3" class="tabContent">
+                <div class="exText">
+                    <p><span class="middot">&middot;</span> 홍길동</p>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="popup_close">
+            <img src="/img/icon_exit_2.png" alt="팝업 닫기" />
+        </button>
+    </div>
+
+        script.
+            let initialData
+            let sangjus
+            let selected
+            function setVar(data) {
+                initialData = data
+                console.log(data)
+                sangjus = JSON.parse(data.bugo.sangjus)
+                setSangjus()
+            }
+
+
+            function setSangjus() {
+                const sangjusContainer = document.querySelector('.list_changeResident')
+
+                const inner = sangjus.map((s, idx) => {
+                    return `
+                        <li>
+                            <input type="radio" id="resident${idx}" name="resident" value="${s.wr_1_name}" class="ab" />
+                            <label for="resident${idx}">${s.wr_1_name}</label>
+                        </li>
+                    `
+                }).join('')
+                console.log(inner)
+                sangjusContainer.innerHTML = inner
+            }
+
+            function changeSangju(e, form) {
+                e.preventDefault()
+
+                const fd = new FormData(form)
+                const selectedSangju = fd.get('resident')
+                if (!selectedSangju) {
+                    alert('변경할 상주를 선택해 주세요')
+                    return
+                }
+
+                selected=sangjus.filter(s => s.wr_1_name===selectedSangju)[0]
+
+                console.log(selected)
+                const labelSangju = document.querySelector('#labelSangju')
+                labelSangju.innerText = selectedSangju + ' 상주'
+                
+                closeModal('sangju')
+            }
+
+            function closeModal(type) {
+                let className = ''
+                switch (type) {
+                    case 'sangju':
+                    className = '.popup_changeResident'
+                    break;
+                    case 'ribbon':
+                    classNAme = '.popup_ribbonEx'
+                }
+                    const popup = document.querySelector(className)
+                    popup.style.display = 'none'
+
+            }
+
+            function payment(btn) {
+
+                const f = document.querySelector('#forderform')
+                const fd = new FormData(f)
+
+                const mourner = fd.get('mourner')
+                let ribbonText = fd.get('ribbonText')
+                const orderer = {
+                    name: fd.get('ordererName'),
+                    phone: fd.get('ordererPhone')
+                }
+
+                
+                if (!selected) {
+                    alert('화환을 수령할 상주를 선택해 주세요')
+                    return
+                }
+                if (!mourner.length) {
+                    alert('화환 보내시는 분을 입력해 주세요')
+                    return
+                }
+                if (ribbonText==='') {
+                    alert('화환에 새길 문구를 지정해 주세요')
+                    return
+                }
+                if (ribbonText==='직접입력') {
+                    const textCustom = fd.get('ribbonTextCustom')
+                    if (!textCustom.length) {
+                        alert('화환에 새길 문구를 입력해 주세요')
+                        return
+                    }
+                    ribbonText = textCustom
+                }
+                if (!orderer.name || !orderer.phone) {
+                    alert('주문하시는 분의 정보를 모두 입력해 주세요')
+                    return
+                }
+                if (!String.prototype.match.call(orderer.phone, /^[0-9]{11}$/)) {
+                    alert('휴대폰 번호는 11자리로 입력해 주세요')
+                    return    
+                }
+
+                const newF = document.createElement('form')
+                newF.method = 'post'
+                newF.action = '/view/payment'
+                
+                newF.innerHTML = `
+                    <input type="hidden" name="memo" value="${fd.get('memo')}" />
+                    <input type="hidden" name="bugoId" value="${initialData.bugo.bugoId}" />
+                    <input type="hidden" name="sangju" value='${JSON.stringify(selected)}' />
+                    <input type="hidden" name="phrase" value="${[mourner, ribbonText].toString()}" />
+                    <input type="hidden" name="orderer" value='${JSON.stringify(orderer)}' />
+                    <input type="hidden" name="flower" value='${JSON.stringify(initialData.flower)}' />
+                    <input type="hidden" name="dest" value='${initialData.bugo.funeral.name + ' ' + initialData.bugo.funeral.binso},${initialData.bugo.funeral.address}' />
+                `
+                
+                
+                document.body.appendChild(newF)
+                newF.submit()
+
+            }

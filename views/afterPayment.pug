@@ -1,0 +1,91 @@
+extends layout 
+block content
+    - console.log(data)
+    
+    header.hd.hd_w
+        h2 주문 완료
+        a.hd_back(href="/view/wreath")
+            img(src="/img/icon_back.png" alt="뒤로 가기")
+        
+        a.hd_exit(href="/view/wreath")
+            img(src="/img/icon_exit_1.png" alt="닫기")
+        
+    
+    
+
+    if data && data.odid
+        .payment_wrap.odview_wrap
+            //- 배송지(빈소)
+            section.pay_sec.pay_place
+                h3 배송지(빈소)
+                .selected
+                    p.selected_obituary= data.destDetail
+                    span.selected_address= data.destAddress
+                    <p class="selected_resident"><strong>상주 </strong>#{data.sangju}</p>
+                
+            
+            //- 화환 리본 문구
+            section.pay_sec.pay_ribbonText
+                h3 화환 리본 문구
+                .selected_ribbonText
+                    p= data.p1
+                    p= data.p2
+                
+            
+            <!-- 결제금액 -->
+            section.pay_sec.pay_amountPayment
+                h3 결제금액
+                .tbl_pay_info
+                    p
+                        span.tbl_l.item_l 상품명
+                        span.tbl_r.item_r= data.flowerName
+                    
+                    p
+                        span.tbl_l 배송비 
+                            span.shippingFee (도시산간지역 추가 배송비)
+                        span.tbl_r= data.deliveryFee===0? '무료배송' : data.deliveryFee
+                    
+                    p.total_amountPayment
+                        span.tbl_l 총 결제 금액
+                        span.tbl_r #{data.totalPrice}
+                    
+                
+            
+            if data.method!=='무통장'
+                section.pay_sec.pay_way.pay_card
+                    h3 카드결제
+                    .tbl_pay_info
+                        p
+                            span.tbl_l 결제방법
+                            span.tbl_r= data.method
+                    
+                
+            else if data.method==='무통장'
+                section.pay_sec.pay_way.pay_bank
+                    h3 무통장 입금
+                    .tbl_pay_info
+                        p
+                            span.tbl_l
+                                span= data.limitDatetime
+                                br
+                                strong= data.account
+                            
+                        button.tbl_r.btn_copy(type="button") 복사하기
+
+            else
+                section.pay_sec.pay_way.pay_easyPay
+                    h3 간편 결제
+                    .tbl_pay_info
+                        p
+                            span.tbl_l 결제상세
+                            span.tbl_r= data.method
+                        
+                    
+            <div class="btn_odview">
+                <a href="https://www.inicis.com/payment-view" class="btn_bg">영수증 보기</a>
+                <a href="/view/wreath" class="btn_bd">추가 주문</a>
+            </div>
+        
+    else
+        .noResult(style="height: 500px; display: flex; justify-content: center; align-items: center; font-size: 20px; text-align: center; padding: 0 15px;")
+            | 잘못된 요청이거나 결제 내역이 존재하지 않습니다.

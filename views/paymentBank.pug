@@ -1,0 +1,133 @@
+extends layout
+block content 
+    body(onLoad=`setVar(${JSON.stringify(data)})`)
+    //- body
+
+    header.hd.hd_w
+        h2 무통장입금
+        a.hd_exit(href="javascript:history.back()")
+            img(src="/img/icon_exit_1.png" alt="닫기")
+        
+    
+    
+        
+    
+    .payment_bank_wrap
+        
+        div
+            input#chk_Email.ab.chk_apply(type="checkbox" name="chk_Email" onChange="toggleCheck('email', event.target.checked)")
+            label(for="chk_Email")
+                span.chk
+                | 이메일로 결제내역 받기
+            .hide_box.email_box
+                label.sound_only(for="emailAddress") 이메일주소
+                input#emailAddress.input_emailAddr(type="text" placeholder="이메일 주소")
+                p.email_ast &ast; 입력하신 이메일 주소로 결제내역을 받으실 수 있습니다.
+            
+        
+        <!-- 현금영수증 신청하기 -->
+        div
+            <input onchange="toggleCheck('bill', event.target.checked)" type="checkbox" id="chk_cashReceipts" name="chk_cashReceipts" class="ab chk_apply" />
+            <label for="chk_cashReceipts"><span class="chk"></span>현금영수증 신청하기</label>
+            <div class="hide_box">
+                <ul class="cashReceipts_box">
+                    <li>
+                        <input type="radio" id="individual" name="cashReceipts" class="ab" checked />
+                        <label for="individual"><span class="cashReceipts"></span>개인소득공제용</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="buisnessman" name="cashReceipts" class="ab" />
+                        <label for="buisnessman"><span class="cashReceipts"></span>사업자지출증빙용</label>
+                    </li>
+                </ul>
+                <label for="emailAddress2" class="sound_only">휴대폰번호</label>
+                <input type="text" id="emailAddress2" class="input_emailAddr" placeholder="휴대폰번호 입력" />
+            </div>
+        
+        <!-- 결제완료 버 -->
+        <div class="payment_finished">
+            <button type="button" class="btn_finished">결제완료</button>
+        </div>
+    
+    <!-- 끝 } 무통장입금 화면 --> 
+        
+    <!-- 팝업 - 가상계좌 전송 수신방법 -->
+    .popup.popup_receive
+        h2 알림
+        <p>입력하신 주문인의 휴대폰으로<br/>입금하실 가상계좌를 전송해 드립니다.<br />수신방법을 선택해주세요.</p>
+        ul.receiveBox
+            li.rec_harf.rec_msg
+                <a href="javascript:payment('lms')" class="btn_rec">
+                    <img src="/img/icon_mail.png" alt="문자로 계좌받기" />문자로 계좌받기
+                </a>
+            
+            li.rec_harf.rec_kakao
+                <button type="button" class="btn_rec" onclick="payment('at')">
+                    <img src="/img/kakaotalk.png" alt="카톡으로 계좌받기" />카톡으로 계좌받기
+                </button>
+            
+        
+        button.popup_close(type="button")
+            img(src="/img/icon_exit_2.png" alt="팝업 닫기")
+        
+    
+
+    script.
+        let initialData 
+        let checkedEmail = false
+        let checkedBill = false
+
+        function setVar(data) {
+            initialData = data
+            console.log(data)
+        }
+        function payment(type) {
+            console.log(type)
+            const xhr = new XMLHttpRequest()
+
+            xhr.onload = () => {
+                //- if (xhr.responseText==='success') {
+                //-     alert('주문이 완료되었습니다')
+                //-     document.querySelector('.popup_receive').style.display='none'
+                //- }
+                location.href=`/view/payment?odid=${xhr.responseText}`
+            }
+
+
+            let input = {
+                ...initialData,
+                billing: {
+                    method: '무통장',
+                    depositInfo: {
+                        checkedBill,
+                        checkedEmail,
+                    }
+                },
+                bizType: type
+            }
+
+            if (checkedEmail) {
+                input.billing.depositInfo.email = document.querySelector('#emailAddress').value
+            }
+            if (checkedBill) {
+                const billValue = document.querySelector('#emailAddress2').value
+                if (!billValue.length) {
+                    alert('현금영수증을 신청하실 번호를 입력해 주세요')
+                    return;
+                }
+                input.billing.depositInfo.billValue = billValue
+                const rs = document.querySelectorAll("input[type='radio']")
+                input.billing.depositInfo.billType = rs[0].checked? '개인소득공제용' : '사업자지출증빙용'
+            }
+
+
+
+            xhr.open('POST', '/view/payBank')
+            xhr.setRequestHeader('Content-type', 'application/json')
+            xhr.send(JSON.stringify(input))
+        }
+
+        function toggleCheck(type, v) {
+            if (type==='email') checkedEmail = v
+            else if (type==='bill') checkedBill = v
+        }

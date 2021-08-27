@@ -1,0 +1,179 @@
+extends layout 
+block content 
+    -console.log(data)
+    body(onLoad=`setVar(${JSON.stringify(data)})`)
+    script(src='/js/kakaosdk.js' type='text/javascript').
+
+    header.hd.hd_w.hd_bd
+        h2 근조화환
+        a.hd_back(href="javascript:history.back()")
+            img(src="/img/icon_back.png" alt="뒤로 가기")
+        
+        button.btn_share(type="button")
+            img(src="/img/icon_share.png" alt="공유하기")
+        
+    
+    
+
+    <!-- 근조화환 상세화면 { 시작 -->
+    section.view_wrap
+        h2.sound_only 근조화환 상세화면
+        <!-- 근조화환 상세 이미지 -->
+        div.v_image
+            img(src=`${data.item.imgUrl? `http://www.smartbugo.co.kr/data/item/${data.item.imgUrl}` : '/img/img01_3.png'}` alt="근조화환 이미지")
+        
+        <!-- 근조화환 상세 정보 -->
+        div.v_info
+            p.v_name= data.item.name
+            p.v_price
+                span#priceBox
+                | 원
+            <p class="v_comment">상품 주문시 판매수익의 일부분을 상주님께 위로금으로 전달드립니다.</p>
+            <span class="delivery_possible">전국배송가능</span>
+        </div>
+        <!-- 근조화환 주문·배송 안내 -->
+        <div class="tab tab_delivery">
+            <h3 class="sound_only">주문·배송 안내</h3>
+            <ul>
+                <li data-id="delivery_cont01" class="on">영업 및 주문 안내</li>
+                <li data-id="delivery_cont02">배송안내</li>
+                <li data-id="delivery_cont03">교환 및 환불 안내</li>
+            </ul>
+            <!-- 영업 및 주문 안내 -->
+            div#delivery_cont01.tabContent.on
+                h4 [영업 및 주문 안내]
+                div - 평일~토요일 오전09시부터 오후18시 까지 상담 가능 (공휴일 휴무)
+                    br
+                    | - 배송 영업 시간
+                    br
+                    | 오전9시~오후9시(일부지역 제외) 사이 입니다. 그 외 시간에 배송을 원할 경우엔 고객센터로 문의 하시기바랍니다. 단, 빠른 배송은 전날 고객센터운영시간에 예약하셔야만 가능합니다.
+                    br
+                    | 전화 주문은 영업시간에만 가능하며, 앱 주문은 24시간 가능합니다.
+                    br
+                    | - 배송사진의 경우 현장 사진은 요청시에만 가능하며, 기본적으로는 배송전 체인점에서 촬영한 사진이 상품 배송완료 후 전송됩니다.
+                    br
+                    | - 상품제작은 입금 또는 결제 확인 후 이루어집니다. 결제가 늦어질 경우 배송이 지연될 수 있습니다.
+                    br
+                    | - 구매 후 변경 사항이 있을 시 고객센터로 필히 전화 부탁드립니다.
+                    br
+                    | - 현금영수증 또는 전자계산서 발급이 필요한 경우 주문전 미리 말씀 부탁드립니다.
+    
+            
+            <!-- 배송안내 -->
+            div#delivery_cont02.tabContent
+                h4 [배송안내]
+                div - 전국 배송 가능하며 기본 배송료는 무료입니다. (일부 상품 제외)
+
+                    | - 배송 시간은 평균 3시간 이내 가능합니다. 단, 도로사정에 따라 달라질 수 있습니다.
+
+                    | 단, 도서 산간 및 (6대 광역시 포함)시군 소재지에서 떨어진 지역의 경우 추가배송비가 발생 될 수 있습니다.
+
+                    | (당일 이내 배송가능하나 시간 지정은 어려우며 자세한 사항은 고객센터로 문의 하시기 바랍니다.)
+    
+            
+            <!-- 교환 및 환불 안내 -->
+            div#delivery_cont03.tabContent
+                h4 [교환 및 환불 안내]
+                div - 상품은 공산품이 아닌 관계로 체인점 보유 상품에 따라 포장(화분포함)이나 소재가 상이할 수 있으며, 계절과 지역에 따라 디자인이 변경 될 수 있습니다. 이로 인한 반품/취소는 불가능합니다.
+                    br
+                    | - 생화 상품은 제작 완료 후 에는 재사용을 하지 않음으로 고객의 변심으로 인한 반품 및 환불이 불가능 합니다.
+                    br
+                    | - 배송 안료 후 수취 거부한 경우 및 주문자의 주문서 작성 내용 오류로 배송이 잘못된 경우에는 반품/취소가 불가능합니다.
+                    br
+                    | - 당일 주문 후 취소는 30분이내 요청 하셔야 만 취소가 가능 합니다.
+                    br
+                    | - 취소요청 후 환불은 요청 후 영업일 기준으로 48시간 이내 환불 처리 가능합니다.
+                    br
+                    | - 카드 환불은 카드사 취소 규정에 따라 약 일주일 정도 소요될 수 있습니다.
+                    br
+                    | - 예약 주문건은 배송요청시간 3시간 이전에 가능하며 반드시 고객센터로 확인 하셔야 합니다.
+                    br
+                    | - 화환의 포인트꽃 색상은 랜덤으로 배송되며, 색상 관련 환불 및 교환 요청은 불가능합니다</div>
+            
+        
+        <!-- 근조화환 주문하기 버튼 -->
+        div.v_btn_box
+            a.btn_full_order(href=data.bugoId!==0? `orderform?f=${data.item.id}&b=${data.bugoId}` : `searchBugo?f=${data.item.id}`) 주문하기
+        
+    </section>
+    <!-- 끝 } 근조화환 상세화면 -->
+        
+    <!-- 팝업 - 공유하기 -->
+    <div class="popup popup_share">
+        <h2>공유하기</h2>
+        <p>근조화환으로 유가족들의 슬픔을 함께 위로해주세요.</p>
+        <ul class="receiveBox">
+            <li class="rec_harf rec_msg">
+                <a href="javascript:shareWithSms()" class="btn_rec">
+                    <img src="/img/icon_mail.png" alt="문자메세지" />문자메세지
+                </a>
+            </li>
+            <li class="rec_harf rec_kakao">
+                <button type="button" class="btn_rec" onclick="shareWithTalk()">
+                    <img src="/img/kakaotalk.png" alt="카카오톡" />카카오톡
+                </button>
+            </li>
+        </ul>
+        <button type="button" class="popup_close">
+            <img src="/img/icon_exit_2.png" alt="팝업 닫기" />
+        </button>
+    </div>
+
+    script.
+        Kakao.init('15931ed324691e5c22a657b516ad6b6a')
+
+        let flower
+        function setVar(data) {
+            flower = data.item
+            const priceBox = document.querySelector('#priceBox')
+            priceBox.innerText = insertComma(data.item.price)
+        }
+
+        const insertComma = (money) => {
+            const strMoney = money.toString();
+            const firstPartLength = strMoney.length % 3;
+            const firstPart = strMoney.slice(0, firstPartLength);
+            const rest = strMoney.slice(firstPartLength);
+
+            if (!rest) return firstPart;
+
+            let restPart = '';
+            let cnt = 0;
+            for (let i = 0; i < rest.length; i++) {
+                restPart += rest[i];
+                if (++cnt === 3) {
+                cnt = 0;
+                restPart += ',';
+                }
+            }
+            restPart = restPart.substring(0, restPart.length - 1);
+            const result = firstPart ? firstPart + ',' + restPart : restPart;
+            return result;
+        };
+
+        function shareWithTalk(bugo) {
+            const {discountRate, price, name, id:fid, originalPrice} = flower
+            const params = {
+                templateId: 53522,
+                templateArgs: {
+                    discountRate,
+                    price,
+                    name,
+                    fid,
+                    originalPrice
+                }
+            }
+            Kakao.Link.sendCustom(params)
+        }
+        function shareWithSms() {
+            
+            const mobileWebUrl = `https://smartbugo-server.herokuapp.com/view/wreathDetail?f=${flower.id}`;
+                const msgBody = `슬픔을 나누는 특별한 자리,%0a근조화환으로 고인에 대한%0a애도의 마음을 담아 빈소로%0a보내실 수 있습니다.%0a애도하는 마음을 전해%0a상주를 위로해 주세요.%0a%0a[화환 상품 보기]%0a%0a${mobileWebUrl}`;
+            
+            if(navigator.userAgent.match(/iPhone/i)) {
+                location.href=`sms:&body=${msgBody}`
+            } else {
+                location.href=`sms:?body=${msgBody}`
+            }
+            
+        }

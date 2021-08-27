@@ -1,0 +1,8 @@
+var mysql = require("mysql2/promise");
+module.exports = mysql.createPool({
+    user: process.env.DB_UNAME,
+    host: process.env.DB_HOST,
+    password: process.env.DB_PW,
+    database: process.env.DB_DNAME,
+    port: process.env.DB_PORT,
+});

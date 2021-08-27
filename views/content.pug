@@ -1,0 +1,20 @@
+extends layout 
+block content 
+    body(onLoad=`setContent("${content}")`)
+    header.hd.hd_w
+        h2= title
+        a.hd_exit(href="javascript:history.back()")
+            img(src="/img/icon_exit_1.png" alt="닫기")   
+
+    
+    section.terms_wrap
+        h2.sound_only= title
+        div.terms_contents
+        
+        script.
+            function setContent(content) {
+                const container = document.querySelector('.terms_contents')
+                container.innerHTML = content
+            }
+    
+    

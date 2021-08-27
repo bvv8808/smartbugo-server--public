@@ -1,0 +1,134 @@
+extends layout 
+block content 
+    body(onLoad=`setVar(${JSON.stringify(data)})`)
+    header.hd.hd_w
+        h2 검색
+        a.hd_back(href="javascript:history.back()")
+            img(src="/img/icon_back.png" alt="뒤로 가기")
+    
+    
+
+    <!-- 검색 화면 { 시작 -->
+    .search_wrap
+        <!-- 검색창 -->
+        <div class="search_box">
+            <form name="fsearchbox" method="get" action="" onsubmit="search(event)">
+                <legend class="sound_only">검색</legend>
+                <label for="sch_q" class="sound_only">검색어</label>
+                <input type="text" name="q" value="" id="sch_q" required />
+                <button type="submit" class="btn_sch_submit">
+                    <img src="/img/icon_search.png" alt="검색" />
+                </button>
+            </form>
+        </div>
+        <!-- 검색 결과 -->
+        <div class="tbl_result" style="overflow: auto">
+            <table>
+                <caption class="sound_only">검색 결과</caption>
+                <thead>
+                    <tr>
+                        <th>상주명</th>
+                        <th>고인명</th>
+                        <th>장례식장</th>
+                        <th>호실</th>
+                        <th>발인</th>
+                        <th>비고</th>
+                    </tr>
+                </thead>
+                <tbody> </tbody>
+            </table>
+            <button type="button" class="btn_more" onclick="fetchMore()">더보기</button>
+        </div>
+
+    script.
+        let fid = ''
+        function setVar(data) {
+            fid= data.flowerId
+        }
+
+        let page = 1
+        let isEnd = false
+        let prevIsEmpty = true
+        const more = document.querySelector('.btn_more')
+                    const tb = document.querySelector('tbody')
+        
+
+        function fetchMore() {
+            if (isEnd) return
+
+            const k = document.querySelector('#sch_q')
+            const xhr = new XMLHttpRequest()
+
+            xhr.onload = () =>{
+                // xhr.responseText
+                const list = JSON.parse(xhr.responseText).list
+                //- console.log(list)
+                
+
+                if (!list.length) {
+                    tb.innerHTML = `
+                        <tr>
+                        <td colspan="6" class="noResult">검색 결과가 없습니다.</td>
+                        </tr>
+                    `
+                    prevIsEmpty = true
+                } else {
+                    if (prevIsEmpty) {
+                        prevIsEmpty = false
+                        tb.innerHTML = ''
+                    }
+                    const newDoms = list.map(item => {
+                        //- const tr = document.createElement('tr')
+                        //- tr.innerHTML = 
+                        const tr = 
+                        `<tr onclick="location.href='/view/orderform?f=${fid}&b=${item.bugoId}'">
+                            <td>${item.sangju}</td>
+                            <td>${item.deceased}</td>
+                            <td>${item.funeral}</td>
+                            <td>${item.binso}</td>
+                            <td>${item.imprint}</td>
+                            <td>${item.etc}</td>
+                        </tr>
+                        `
+                        return tr
+                    }).join('')
+
+                    //- newDoms.forEach(dom => {
+                    //-     tb.appendChild(dom)
+                    //- })
+                    tb.innerHTML += newDoms
+                }
+                if (list.length < 15) {
+                    isEnd = true
+                    more.disabled = true
+                    more.classList.add('on')
+                }
+                else if (list.length === 15) {
+                    page++
+                    more.classList.remove('on')
+                }
+                    
+                
+            }
+
+            xhr.open('GET', `/view/bugoList?page=${page}${k.value.length? '&keyword='+k.value : ''}`)
+            xhr.send()
+        }
+
+        function search(e) {
+            e.preventDefault()
+
+            page = 1
+            isEnd = false
+            
+            more.disabled = false
+            more.classList.remove('on')
+            tb.innerHTML = ''
+
+            fetchMore()
+        }
+
+        fetchMore()
+
+
+    

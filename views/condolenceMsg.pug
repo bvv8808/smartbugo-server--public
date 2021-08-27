@@ -1,0 +1,27 @@
+extends layout 
+block content 
+    
+    header.hd.hd_w
+        h2 조문 메시지
+         <a href="javascript:history.back()" class="hd_exit">
+            <img src="/img/icon_exit_1.png" alt="닫기" />
+        </a>
+    
+    section.cdlcMsg_wrap
+        h2
+            | 조문객이 남긴
+            br
+            string.cdlcMsg_count 16건
+            | 의
+            strong 조문메세지
+            | 가 있습니다.
+        
+        ul.cdlcMsg_list
+            for msg in msgs
+                li
+                    span.msg_sender= msg.sender
+                    p.msg_con= msg.msg
+            
+        
+    
+    

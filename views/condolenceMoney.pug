@@ -1,0 +1,97 @@
+extends layout 
+block content 
+    <header class="hd hd_w">
+        <h2>부의금 서비스</h2>
+        <a href="javascript:history.back()" class="hd_exit">
+            <img src="/img/icon_exit_1.png" alt="닫기" />
+        </a>
+    </header>
+    <!-- 끝 } header -->
+
+    <!-- 부의금 서비스 { 시작 -->
+    <div class="cdlcMoney_wrap">
+        <h2 class="sound_only">부의금 서비스</h2>
+        <header class="cdlcMoney_disc">
+            <h3>
+                |상주와 유가족의<br /><strong>부의금계좌</strong> 를 안내해 드립니다.
+            </h3>
+            <img src="/img/icon_condolence_money.png" alt="상주와 유가족의 부의금계좌 를 안내해 드립니다." />
+        </header>
+        <!-- 부의금 리스트 -->
+        ul.account_list
+            for account in accounts
+                li
+                    div.account_info
+                        p.account_name= account.relation 
+                            strong= ` ${account.name}`
+                        p.account_bank
+                            strong= account.accountBank 
+                            |  #{account.accountNum}
+                    button.btn_reception(type='button' onclick=`setAccount(${JSON.stringify(account)})`) 부의금 계좌 문자 받기
+            
+        
+    </div>
+    <!-- 끝 } 부의금 서비스 -->
+
+    <!-- 팝업 - 계좌 정보를 받기 위한 정보 입력 -->
+    <div class="popup popup_getAccount">
+        <h2>알림</h2>
+        <p>부의금 계좌는 개인정보 보호를 위해 문자로 전송됩니다.</p>
+        
+        <div class="input_phoneNum">
+            <h3>휴대전화를 입력하세요.</h3>
+            <input type="text" numberOnly id="phoneNumber" name="phoneNumber" placeholder="-없이 입력하세요." />
+        </div>
+        ul.receiveBox
+            li.rec_harf.rec_msg
+                a.btn_rec(href=`javascript:sendAccount('lms')`)
+                    img(src="/img/icon_mail.png" alt="문자로 계좌받기") 
+                    |문자로 계좌받기
+                
+            
+            li.rec_harf.rec_kakao
+                button.btn_rec(type="button" onclick="sendAccount('at')")
+                    img(src="/img/kakaotalk.png" alt="카톡으로 계좌받기")
+                    |카톡으로 계좌받기
+                
+            
+        
+        
+        <button type="button" class="popup_close">
+            <img src="/img/icon_exit_2.png" alt="팝업 닫기" />
+        </button>
+    </div>
+
+    script.
+        let selectedAccount = {}
+        function setAccount(account) {
+            //- console.log(account)
+            selectedAccount = account
+        }
+
+        function sendAccount(method) {
+            const phone = document.querySelector('#phoneNumber')
+            // Validate
+            if (!String.prototype.match.call(phone.value, /^[0-9]{11}$/)) {
+                alert('휴대폰 번호는 11자리로 입력해 주세요')
+                return    
+            }
+            
+            
+            const xhr = new XMLHttpRequest()
+
+            xhr.onload = () => {
+                console.log(xhr.responseText)
+                if (xhr.responseText==='success') {
+                    phone.parentNode.parentNode.style.display= 'none'
+                    alert('부의금 계좌가 발송 되었습니다')
+                }
+                else {
+                    alert('계좌 발송에 실패했습니다. 고객센터에 문의 바랍니다.')
+                }
+            }
+
+            xhr.open('POST', '/view/sendAccount')
+            xhr.setRequestHeader('Content-type', 'application/json')
+            xhr.send(JSON.stringify({account: selectedAccount, method, phoneToSend: phone.value}))
+        }

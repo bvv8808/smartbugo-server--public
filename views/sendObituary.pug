@@ -1,0 +1,62 @@
+extends layout 
+block content 
+    script(src='/js/kakaosdk.js' type='text/javascript').
+    
+    header.hd.hd_w.hd_bd
+        h2 부고 보내기
+        a.hd_back(href="javascript:history.back()")
+            img(src="/img/icon_back.png" alt="뒤로 가기")
+        
+    //- 부고 보내기
+    div.send_obituary_wrap
+        div.ob_preview
+            p
+                | 考 #{bugo.deceasedName}님께서 (상주 #{bugo.sangju})<br />
+                <strong>#{bugo.deceasedTime}</strong>에<br />
+                | 별세하셨기에 삼가 알려드립니다.
+            
+            a.btn_ob_preview(href="javascript:history.back()") 부고장으로 돌아가기
+        
+
+        ul.receiveBox
+            li.rec_kakao
+                button#kakaoBtn.btn_rec(type="button" onclick=`shareWithTalk(${JSON.stringify(bugo)})`)
+                    img(src="/img/kakaotalk.png" alt="카톡으로 계좌받기") 
+                    | 카톡으로 전송하기
+                
+            
+            li.rec_msg
+                a.btn_rec(href=`javascript:shareWithSms(${JSON.stringify(bugo)})`)
+                    img(src="/img/icon_mail.png" alt="문자로 계좌받기")
+                    | 문자로 전송하기
+                
+
+
+    script.
+        Kakao.init('15931ed324691e5c22a657b516ad6b6a')
+
+        function shareWithTalk(bugo) {
+            const params = {
+                templateId: 53262,
+                templateArgs: {
+                    title: '스마트부고 부고 알림',
+                    description: `故 ${bugo.deceasedName}님께서 별세 하셨기에\n` +
+                                "아래와 같이 부고를 전해 드립니다.",
+                    dname: bugo.deceasedName,
+                    bid: bugo.bugoId.toString()
+                }
+            }
+            Kakao.Link.sendCustom(params)
+        }
+        function shareWithSms(bugo) {
+            
+            const webLink = `https://smartbugo-server.herokuapp.com/view/obituary?b=${bugo.bugoId}`
+            const msgBody = `故 ${bugo.deceasedName}님께서 별세 하셨기에%0a아래와 같이 부고를 전해 드립니다.%0a%0a◼︎부고 (확인)◼︎%0a${webLink}%0a%0a%0a황망한 마음에 일일이 연락%0a드리지 못함을 널리 혜량해%0a주시길 바랍니다.`;
+            
+            if(navigator.userAgent.match(/iPhone/i)) {
+                location.href=`sms:&body=${msgBody}`
+            } else {
+                location.href=`sms:?body=${msgBody}`
+            }
+            
+        }
